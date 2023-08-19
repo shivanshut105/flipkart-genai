@@ -1,0 +1,14 @@
+.button{
+    border: 1px solid black;
+    color: black;
+    padding: .25rem .5rem;
+    border-radius: .4rem;
+    position: absolute;
+    bottom: .8em;
+    right: 1.5em;
+}
+
+.button:hover{
+    background-color: black;
+    color: white;
+}
