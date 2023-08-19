@@ -29,7 +29,7 @@ export async function scrapeProducts(searchTerm) {
     });
   });
 
-  console.log(data.slice(4, 9));
-
   await browser.close();
+  console.log(data.slice(4, 7));
+  return data.slice(4, 7);
 }
