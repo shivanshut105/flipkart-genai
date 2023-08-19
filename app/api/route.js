@@ -30,15 +30,16 @@ const ProcessQuery = async (query) => {
     chains: [baseChain, finalChain],
     verbose: true,
   });
-  ProcessQuery;
+  // ProcessQuery;
 
   let response;
   if (query) {
     response = await overallChain.run(query);
   }
-  console.log(response);
+  // console.log(response);
   return response;
 };
+
 const ProcessItemsArray = async (itemsArray) => {
   const resultObject = {};
 
@@ -56,7 +57,7 @@ export async function POST(request, response) {
     const { query } = await request.json();
     // console.log(query);
     const itemsArray = ProcessQuery(query);
-    console.log(itemsArray);
+    // console.log(itemsArray);
     const resultObject = await ProcessItemsArray(itemsArray);
 
     console.log(resultObject);
