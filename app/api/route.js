@@ -15,7 +15,7 @@ const ProcessQuery = async (query) => {
   });
   const finalTemplate = new PromptTemplate({
     template:
-      "Add all the clothing or accessories from this description and return it as an array of strings, description : {description}",
+      "Add all the clothing or accessories from this description and return it as an array of strings, description : {description}. The return type of response should be an array.",
     inputVariables: ["description"],
   });
 
@@ -35,34 +35,64 @@ const ProcessQuery = async (query) => {
   let response;
   if (query) {
     response = await overallChain.run(query);
+    var cleanedString = response.trim().replace(/^\s*['"]?|['"]?\s*$/g, "");
+    try {
+      const parsedArray = JSON.parse(cleanedString);
+      console.log("response", typeof parsedArray, parsedArray);
+      return parsedArray;
+    } catch (err) {
+      console.log("Parsing error", err);
+      return [];
+    }
   }
-  // console.log(response);
+  console.log("[llChain] query Not Found", response);
   return response;
 };
 
 const ProcessItemsArray = async (itemsArray) => {
   const resultObject = {};
 
-  for (const item of itemsArray) {
-    const itemResults = await scrapeProducts(item);
-    resultObject[item] = itemResults;
-  }
+  try {
+    const promises = itemsArray.map(async (item) => {
+      try {
+        console.log("Scraping for item", item);
+        const itemResults = await scrapeProducts(item);
+        resultObject[item] = itemResults;
+      } catch (error) {
+        console.error(`Error scraping for item ${item}:`, error);
+        resultObject[item] = "Error occurred during scraping.";
+      }
+    });
 
-  return resultObject;
+    // Wait for all promises to resolve before returning the resultObject
+    await Promise.all(promises);
+
+    console.log("[scrape] resultObject", resultObject);
+    return resultObject;
+  } catch (error) {
+    console.error("Error in ProcessItemsArray:", error);
+    throw error;
+  }
 };
 
 // routes
 export async function POST(request, response) {
   try {
     const { query } = await request.json();
-    // console.log(query);
-    const itemsArray = ProcessQuery(query);
-    // console.log(itemsArray);
-    const resultObject = await ProcessItemsArray(itemsArray);
+    console.log(query);
+    let itemsArray = await ProcessQuery(query);
 
-    console.log(resultObject);
-
-    return NextResponse.json({ message: "Success", data: resultObject }); // Sending a response back
+    // Process the items array and send the response once it's done
+    try {
+      // const resultArray = [];
+      const resultObject = await ProcessItemsArray(itemsArray);
+      console.log("ProcessItemsArray result:", resultObject);
+      // resultArray.push(resultObject);
+      return NextResponse.json({ message: "Success", data: resultObject });
+    } catch (error) {
+      console.error("ProcessItemsArray error:", error);
+      return NextResponse.json({ error: "An error occurred" }, { status: 500 });
+    }
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "An error occurred" }, { status: 500 });
