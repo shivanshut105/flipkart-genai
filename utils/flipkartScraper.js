@@ -1,12 +1,12 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 
 export async function scrapeProducts(searchTerm) {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.connect({
+    browserWSEndpoint: `wss://chrome.browserless.io?token=${process.env.BLESS_TOKEN}`,
+  });
   const page = await browser.newPage();
   console.log("searchTerm", searchTerm);
   const searchUrl = `https://www.flipkart.com/search?q=${searchTerm}`;
-
-  await page.goto(searchUrl);
 
   const data = await page.evaluate(() => {
     const elements = Array.from(
