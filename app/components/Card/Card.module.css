@@ -5,6 +5,7 @@
     width: 20em;
     border-radius: 0.6em;
     margin: 1em;
+    margin-left: 2rem;
     overflow: hidden;
     cursor: pointer;
     box-shadow: 0 13px 27px -5px hsla(240, 30.1%, 28%, 0.25),

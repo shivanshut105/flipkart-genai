@@ -2,9 +2,10 @@
 import { useState } from "react";
 import Cards from "./components/Card/Cards";
 import axios from "axios";
+import Carousels from "./components/Carousels/Carousels";
 
 const CARD_DATA = {
-  shirt: [
+  shoes: [
     {
       name: "Volga NX Hiking & Trekking Shoes For Men  (Black)",
       image:
@@ -28,6 +29,7 @@ const CARD_DATA = {
 
 export default function Home() {
   const [query, setQuery] = useState("");
+  const [outfitData, setOutfitData] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,11 +41,17 @@ export default function Home() {
         },
         query: query,
       });
+      setOutfitData(response.data.data);
       console.log(response.data.message, response.data.data);
     } catch (err) {
       console.error(err);
     }
   };
+
+  const carouselData = [];
+  for(const key in outfitData){
+    carouselData.push(<Cards key={key} title={key} items={outfitData[key]} />);
+  }
 
   return (
     <>
@@ -92,7 +100,7 @@ export default function Home() {
         </form>
       </main>
       <section>
-        <Cards items={CARD_DATA["shirt"]} />
+        <Carousels data = {carouselData} />
       </section>
     </>
   );
