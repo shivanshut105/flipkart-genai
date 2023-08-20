@@ -9,7 +9,7 @@ const truncate = (str)=>{
 const Card = (props) => {
   return (
     <div className={classes.card}>
-      <img src={props.image} alt={props.name} />
+      <img src={props.image} alt={props.name}/>
       <div className={classes['card-body']}>
         <h2>{truncate(props.name)}</h2>
         <Button link={props.link}>Link</Button>
