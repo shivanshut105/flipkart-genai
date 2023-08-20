@@ -60,7 +60,7 @@ export default function Home() {
   }
 
   return (
-    <div className="w-[90vw] overflow-hidden">
+    <div>
       <header className="w-1/2 mt-7 translate-x-1/2">
         <form onSubmit={handleSubmit}>
           <label
