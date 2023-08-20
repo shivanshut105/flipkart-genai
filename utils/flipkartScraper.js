@@ -3,7 +3,7 @@ import puppeteer from "puppeteer";
 export async function scrapeProducts(searchTerm) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-
+  console.log("searchTerm", searchTerm);
   const searchUrl = `https://www.flipkart.com/search?q=${searchTerm}`;
 
   await page.goto(searchUrl);
@@ -22,9 +22,9 @@ export async function scrapeProducts(searchTerm) {
       const productName = nameAnchor ? nameAnchor.title : null;
       const productLink = nameAnchor ? nameAnchor.href : null;
       return {
-        productName: productName,
-        imgSrc: imgSrc,
-        productLink: productLink,
+        name: productName,
+        image: imgSrc,
+        link: productLink,
       };
     });
   });
