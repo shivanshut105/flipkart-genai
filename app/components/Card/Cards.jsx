@@ -23,12 +23,13 @@ const responsive = {
 };
 
 const Cards = (props) => {
+    if(props.items.length===0) return;
     return (
         <>
             <h1 className={classes.title}>{props.title}</h1>
-            <Carousel responsive={responsive}>
+            <Carousel responsive={responsive} className="px-4">
                 {props.items.map((item, i) => {
-                    return <Card key={i} name={item.name} image={item.image} link={item.link} />
+                    return <Card  key={i} name={item.name} image={item.image} link={item.link} />
                 })}
             </Carousel>
         </>

@@ -3,8 +3,11 @@ import { useState } from "react";
 import Cards from "./components/Card/Cards";
 import axios from "axios";
 import Carousels from "./components/Carousels/Carousels";
+import { flushSync } from "react-dom";
+import LoadingSpinner from "./UI/Button/LoadingSpinner/LoadingSpinner";
+import classes from './page.module.css';
 
-const CARD_DATA = {
+const DUMMY_DATA = {
   shoes: [
     {
       name: "Volga NX Hiking & Trekking Shoes For Men  (Black)",
@@ -30,11 +33,13 @@ const CARD_DATA = {
 export default function Home() {
   const [query, setQuery] = useState("");
   const [outfitData, setOutfitData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      setIsLoading(true);
       const response = await axios.post("/api", {
         headers: {
           "content-type": "application/json",
@@ -42,6 +47,7 @@ export default function Home() {
         query: query,
       });
       setOutfitData(response.data.data);
+      setIsLoading(false);
       console.log(response.data.message, response.data.data);
     } catch (err) {
       console.error(err);
@@ -49,13 +55,13 @@ export default function Home() {
   };
 
   const carouselData = [];
-  for(const key in outfitData){
+  for (const key in outfitData) {
     carouselData.push(<Cards key={key} title={key} items={outfitData[key]} />);
   }
 
   return (
-    <>
-      <main className="w-1/2 mt-7 translate-x-1/2">
+    <div className="w-[90vw] overflow-hidden">
+      <header className="w-1/2 mt-7 translate-x-1/2">
         <form onSubmit={handleSubmit}>
           <label
             htmlFor="search"
@@ -98,10 +104,11 @@ export default function Home() {
             </button>
           </div>
         </form>
-      </main>
-      <section>
-        <Carousels data = {carouselData} />
-      </section>
-    </>
+      </header>
+      <div>
+        {!isLoading && <Carousels data={carouselData} />}
+        {isLoading && <LoadingSpinner />}
+      </div>
+    </div>
   );
 }
